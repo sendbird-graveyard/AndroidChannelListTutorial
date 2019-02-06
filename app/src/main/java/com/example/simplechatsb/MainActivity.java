@@ -14,15 +14,18 @@ import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 
 import java.security.acl.Group;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     final static String APP_ID = "2686B0E8-CBD6-43EF-98C7-2D321A920418"; // Sync Server App
-    final static String USER_ID = "204ea859-18c0-482c-8729-bd8c264b8705"; // Rommel
+    String USER_ID = "204ea859-18c0-482c-8729-bd8c264b8705"; // Rommel
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.group_channel_list);
+        USER_ID = getIntent().getStringExtra("userID");
+        Log.d("debug", "userID = " + USER_ID);
         init_sendbird();
     }
 
@@ -36,13 +39,11 @@ public class MainActivity extends AppCompatActivity {
     protected void get_group_channels() {
         GroupChannelListQuery channelListQuery = GroupChannel.createMyGroupChannelListQuery();
         channelListQuery.setIncludeEmpty(true);
-
+        List<String> customTypeList = Arrays.asList("SimpleGroupChatSB");
+        channelListQuery.setCustomTypesFilter(customTypeList);
         channelListQuery.next(new GroupChannelListQuery.GroupChannelListQueryResultHandler() {
             @Override
             public void onResult(List<GroupChannel> list, SendBirdException e) {
-                Log.d("debug", "GROUP CHANNEL LIST");
-                Log.d("debug", list.toString());
-
                 if (e != null) {    // Error.
                     return;
                 }

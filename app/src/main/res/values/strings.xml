@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Simple Chat SB</string>
+    <string name="title_activity_login">LoginActivity</string>
 </resources>
