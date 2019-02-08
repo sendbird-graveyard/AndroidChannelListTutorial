@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Simple Chat SB</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_open_channel_list">OpenChannelListActivity</string>
+    <string name="title_activity_group_channel_list">GroupChannelListActivity</string>
+    <string name="title_activity_channel_list">ChannelListActivity</string>
+
 </resources>

@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
 import com.sendbird.android.GroupChannel;
+import com.sendbird.android.OpenChannel;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.UserMessage;
@@ -24,7 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
-    private String mChannelUrl = "sendbird_open_channel_tutorial";
+    private String mChannelUrl;
+    private String mChannelType;
     private final static String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_CHAT";
 
     private ChatAdapter mChatAdapter;
@@ -48,9 +50,40 @@ public class ChatActivity extends AppCompatActivity {
 
         Bundle b = getIntent().getExtras();
         mChannelUrl = (String) b.get("channelUrl");
-        String applicationID = SendBird.getApplicationId();
-        String userID = SendBird.getCurrentUser().getUserId();
+        mChannelType = (String) b.get("channelType");
 
+        switch(mChannelType) {
+            case Constants.openChannelType:
+                join_open_channel();
+                break;
+            case Constants.groupChannelType:
+                join_group_channel();
+                break;
+            default:
+                Log.e("App", "Invalid Channel Type: " + mChannelType);
+                finish();
+                break;
+        }
+        mSendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mChatAdapter.sendMessage(mMessageEditText.getText().toString());
+                mMessageEditText.setText("");
+            }
+        });
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
+                    mChatAdapter.loadPreviousMessages();
+                }
+            }
+        });
+
+    }
+
+    private void join_group_channel() {
         GroupChannel.getChannel(mChannelUrl, new GroupChannel.GroupChannelGetHandler() {
             @Override
             public void onResult(final GroupChannel groupChannel, SendBirdException e) {
@@ -73,26 +106,32 @@ public class ChatActivity extends AppCompatActivity {
                 });
             }
         });
-
-        mSendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mChatAdapter.sendMessage(mMessageEditText.getText().toString());
-                mMessageEditText.setText("");
-            }
-        });
-
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
-                    mChatAdapter.loadPreviousMessages();
-                }
-            }
-        });
-
     }
 
+    private void join_open_channel() {
+        OpenChannel.getChannel(mChannelUrl, new OpenChannel.OpenChannelGetHandler() {
+            @Override
+            public void onResult(final OpenChannel openChannel, SendBirdException e) {
+                if (e != null) {
+                    e.printStackTrace();
+                    return;
+                }
+
+                openChannel.enter(new OpenChannel.OpenChannelEnterHandler() {
+                    @Override
+                    public void onResult(SendBirdException e) {
+                        if (e != null) {
+                            e.printStackTrace();
+                            return;
+                        };
+
+                        mChatAdapter = new ChatAdapter(openChannel);
+                        mRecyclerView.setAdapter(mChatAdapter);
+                    }
+                });
+            }
+        });
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -120,9 +159,9 @@ public class ChatActivity extends AppCompatActivity {
         private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
 
         private ArrayList<BaseMessage> mMessageList;
-        private GroupChannel mChannel;
+        private BaseChannel mChannel;
 
-        ChatAdapter(GroupChannel channel) {
+        ChatAdapter(BaseChannel channel) {
             mMessageList = new ArrayList<>();
             mChannel = channel;
 

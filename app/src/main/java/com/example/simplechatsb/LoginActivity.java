@@ -1,5 +1,6 @@
 package com.example.simplechatsb;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,14 +13,10 @@ import android.widget.Toast;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
-import com.example.simplechatsb.MainActivity;
 
 
 public class LoginActivity extends AppCompatActivity {
-    // Sample APP ID provided by SendBird
-
-    private static final String APP_ID = MainActivity.APP_ID;
-
+    final static String APP_ID = "2686B0E8-CBD6-43EF-98C7-2D321A920418"; // Sync Server App
     private Button mConnectButton;
     private TextInputEditText mUserIdEditText, mUserNicknameEditText;
     private SharedPreferences mPrefs;
@@ -38,19 +35,18 @@ public class LoginActivity extends AppCompatActivity {
         mUserIdEditText.setText(savedUserID);
         mUserNicknameEditText = (TextInputEditText) findViewById(R.id.edit_text_login_user_nickname);
 
-        // Initialize the SendBird SDK.
         SendBird.init(APP_ID, this.getApplicationContext());
 
         mConnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String userId = mUserIdEditText.getText().toString();
-                // Remove all spaces from userID
                 userId = userId.replaceAll("\\s", "");
 
                 String userNickname = mUserNicknameEditText.getText().toString();
                 SharedPreferences.Editor mEditor = mPrefs.edit();
                 mEditor.putString("userId", userId).commit();
+                mEditor.putString("userNickName", userNickname).commit();
                 connectToSendBird(userId, userNickname);
             }
         });
@@ -83,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
                 // Update the user's nickname
                 updateCurrentUserInfo(userNickname);
 
-                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                Intent intent = new Intent(LoginActivity.this, MainMenuActivity.class);
                 intent.putExtra("userID", userId);
                 intent.putExtra("userNickname", userNickname);
 
