@@ -14,11 +14,11 @@ import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChannelListActivity extends AppCompatActivity {
     String USER_ID;
-    String USER_NICKNAME;
     String CHANNEL_TYPE;
 
     @Override
@@ -27,7 +27,6 @@ public class ChannelListActivity extends AppCompatActivity {
         setContentView(R.layout.channel_list);
 
         USER_ID = getIntent().getStringExtra("userID");
-        USER_NICKNAME = getIntent().getStringExtra("userNickname");
         CHANNEL_TYPE = getIntent().getStringExtra("channelType");
         init_sendbird();
     }
@@ -53,6 +52,7 @@ public class ChannelListActivity extends AppCompatActivity {
     protected void get_group_channels() {
         GroupChannelListQuery channelListQuery = GroupChannel.createMyGroupChannelListQuery();
         channelListQuery.setIncludeEmpty(true);
+        channelListQuery.setLimit(100);
         channelListQuery.next(new GroupChannelListQuery.GroupChannelListQueryResultHandler() {
             @Override
             public void onResult(List<GroupChannel> list, SendBirdException e) {
@@ -66,7 +66,7 @@ public class ChannelListActivity extends AppCompatActivity {
 
     protected void get_open_channels() {
         OpenChannelListQuery channelListQuery = OpenChannel.createOpenChannelListQuery();
-        channelListQuery.setLimit(50);
+        channelListQuery.setLimit(100);
         channelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
             @Override
             public void onResult(List<OpenChannel> list, SendBirdException e) {

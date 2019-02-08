@@ -8,7 +8,6 @@ import android.widget.LinearLayout;
 
 public class MainMenuActivity extends AppCompatActivity {
     String userID;
-    String userNickname;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,14 +15,12 @@ public class MainMenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_menu);
 
         userID = getIntent().getStringExtra("userID");
-        userNickname = getIntent().getStringExtra("userNickname");
         LinearLayout start_group_channel_list_activity = findViewById(R.id.start_group_channel_list_activity);
         start_group_channel_list_activity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainMenuActivity.this, ChannelListActivity.class);
                 intent.putExtra("userID", userID);
-                intent.putExtra("userNickname", userNickname);
                 intent.putExtra("channelType", Constants.groupChannelType);
                 startActivity(intent);
             }
@@ -35,7 +32,6 @@ public class MainMenuActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainMenuActivity.this, ChannelListActivity.class);
                 intent.putExtra("userID", userID);
-                intent.putExtra("userNickname", userNickname);
                 intent.putExtra("channelType", Constants.openChannelType);
                 startActivity(intent);
             }

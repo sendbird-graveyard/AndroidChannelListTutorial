@@ -16,7 +16,7 @@ import com.sendbird.android.User;
 
 
 public class LoginActivity extends AppCompatActivity {
-    final static String APP_ID = "2686B0E8-CBD6-43EF-98C7-2D321A920418"; // Sync Server App
+    final static String APP_ID = "9DA1B1F4-0BE6-4DA8-82C5-2E81DAB56F23"; // Sample App
     private Button mConnectButton;
     private TextInputEditText mUserIdEditText, mUserNicknameEditText;
     private SharedPreferences mPrefs;
@@ -63,7 +63,6 @@ public class LoginActivity extends AppCompatActivity {
         SendBird.connect(userId, new SendBird.ConnectHandler() {
             @Override
             public void onConnected(User user, SendBirdException e) {
-
                 if (e != null) {
                     // Error!
                     Toast.makeText(
@@ -82,7 +81,6 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = new Intent(LoginActivity.this, MainMenuActivity.class);
                 intent.putExtra("userID", userId);
                 intent.putExtra("userNickname", userNickname);
-
                 startActivity(intent);
                 finish();
             }
