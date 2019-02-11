@@ -11,43 +11,42 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.sendbird.android.BaseChannel;
 import com.sendbird.android.GroupChannel;
 
 import java.util.List;
 
-public class GroupChannelListAdapter extends RecyclerView.Adapter<GroupChannelListAdapter.BaseChannelListViewHolder> {
+public class GroupChannelListAdapter extends RecyclerView.Adapter<GroupChannelListAdapter.GroupChannelListViewHolder> {
     private List<GroupChannel> mList;
     private String mChannelType;
-
-    public class BaseChannelListViewHolder extends RecyclerView.ViewHolder{
-        public TextView channelUrlTextView;
-        public Button joinChannelButton;
-        private String channelUrl;
-
-        public BaseChannelListViewHolder(LinearLayout v) {
-            super(v);
-            channelUrlTextView = itemView.findViewById(R.id.channel_url_text_view);
-            joinChannelButton = itemView.findViewById(R.id.join_channel_button);
-        }
-    }
 
     public GroupChannelListAdapter(List<GroupChannel> list, String channelType) {
         mList = list;
         mChannelType = channelType;
     }
 
+    public class GroupChannelListViewHolder extends RecyclerView.ViewHolder{
+        public TextView channelUrlTextView;
+        public Button joinChannelButton;
+        private String channelUrl;
+
+        public GroupChannelListViewHolder(LinearLayout v) {
+            super(v);
+            channelUrlTextView = itemView.findViewById(R.id.channel_url_text_view);
+            joinChannelButton = itemView.findViewById(R.id.join_channel_button);
+        }
+    }
+
     @Override
-    public BaseChannelListViewHolder onCreateViewHolder(ViewGroup parent,
+    public GroupChannelListViewHolder onCreateViewHolder(ViewGroup parent,
                                                          int viewType) {
         LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.channel_item, parent, false);
-        BaseChannelListViewHolder vh = new BaseChannelListViewHolder(v);
+        GroupChannelListViewHolder vh = new GroupChannelListViewHolder(v);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(BaseChannelListViewHolder holder, int position) {
+    public void onBindViewHolder(GroupChannelListViewHolder holder, int position) {
         holder.channelUrl = mList.get(position).getUrl();
         holder.channelUrlTextView.setText(holder.channelUrl);
 
