@@ -92,6 +92,9 @@ public class ChatActivity extends AppCompatActivity {
                     return;
                 }
 
+                mChatAdapter = new ChatAdapter(groupChannel);
+                mRecyclerView.setAdapter(mChatAdapter);
+
                 groupChannel.join(new GroupChannel.GroupChannelJoinHandler() {
                     @Override
                     public void onResult(SendBirdException e) {
@@ -100,8 +103,6 @@ public class ChatActivity extends AppCompatActivity {
                             return;
                         };
 
-                        mChatAdapter = new ChatAdapter(groupChannel);
-                        mRecyclerView.setAdapter(mChatAdapter);
                     }
                 });
             }
