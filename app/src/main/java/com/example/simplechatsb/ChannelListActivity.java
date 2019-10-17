@@ -13,6 +13,10 @@ import com.sendbird.android.OpenChannelListQuery;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
+import com.sendbird.syncmanager.ChannelCollection;
+import com.sendbird.syncmanager.ChannelEventAction;
+import com.sendbird.syncmanager.handler.ChannelCollectionHandler;
+import com.sendbird.syncmanager.handler.CompletionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +24,7 @@ import java.util.List;
 public class ChannelListActivity extends AppCompatActivity {
     String USER_ID;
     String CHANNEL_TYPE;
+    ChannelCollection mChannelCollection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,8 @@ public class ChannelListActivity extends AppCompatActivity {
                 populate_group_channel_list(list);
             }
         });
+
+        createGroupChannelCollection(channelListQuery);
     }
 
     protected void get_open_channels() {
@@ -74,6 +81,49 @@ public class ChannelListActivity extends AppCompatActivity {
                     return;
                 }
                 populate_open_channel_list(list);
+            }
+        });
+    }
+
+    protected void createGroupChannelCollection(GroupChannelListQuery channelListQuery) {
+        // Create Channel Collection
+        if (mChannelCollection == null) {
+            Log.d("App", "Initialize GroupChannel Collection");
+            mChannelCollection = new ChannelCollection(channelListQuery);
+
+        }
+
+        ChannelCollectionHandler channelCollectionHandler = new ChannelCollectionHandler() {
+
+            @Override
+            public void onChannelEvent(final ChannelCollection collection, final List<GroupChannel> channels, final ChannelEventAction action) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("App", "GroupChannel Collection run called");
+                        switch (action) {
+                            case INSERT:
+                                break;
+                            case UPDATE:
+                                break;
+                            case MOVE:
+                                break;
+                            case REMOVE:
+                                break;
+                            case CLEAR:
+                                break;
+                        }
+                    }
+                });
+            }
+        };
+
+        mChannelCollection.setCollectionHandler(channelCollectionHandler);
+        mChannelCollection.fetch(new CompletionHandler() {
+            @Override
+            public void onCompleted(SendBirdException e) {
+                Log.d("App", "GroupChannel Collection fetch called");
+
             }
         });
     }
