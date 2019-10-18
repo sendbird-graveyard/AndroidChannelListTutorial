@@ -19,12 +19,15 @@ import com.sendbird.syncmanager.handler.ChannelCollectionHandler;
 import com.sendbird.syncmanager.handler.CompletionHandler;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ChannelListActivity extends AppCompatActivity {
     String USER_ID;
     String CHANNEL_TYPE;
     ChannelCollection mChannelCollection;
+
+    private GroupChannelListAdapter mGroupChannelListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,11 @@ public class ChannelListActivity extends AppCompatActivity {
         USER_ID = getIntent().getStringExtra("userID");
         CHANNEL_TYPE = getIntent().getStringExtra("channelType");
         init_sendbird();
+
+        List<GroupChannel> initialGroupChannelList = new ArrayList<>();
+        if (mGroupChannelListAdapter == null) {
+            mGroupChannelListAdapter = new GroupChannelListAdapter(initialGroupChannelList, CHANNEL_TYPE);
+        }
     }
 
     @Override
@@ -68,7 +76,9 @@ public class ChannelListActivity extends AppCompatActivity {
             }
         });
 
-        createGroupChannelCollection(channelListQuery);
+        if (mChannelCollection == null) {
+            createGroupChannelCollection(channelListQuery);
+        }
     }
 
     protected void get_open_channels() {
@@ -85,6 +95,37 @@ public class ChannelListActivity extends AppCompatActivity {
         });
     }
 
+    ChannelCollectionHandler channelCollectionHandler = new ChannelCollectionHandler() {
+
+        @Override
+        public void onChannelEvent(final ChannelCollection channelCollection, final List<GroupChannel> channelList, final ChannelEventAction action) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d("App", "GroupChannel Collection run called, action = " + action.toString());
+
+                    switch (action) {
+                        case INSERT:
+                            mGroupChannelListAdapter.insertChannels(channelList, channelCollection.getQuery().getOrder());
+                            break;
+                        case UPDATE:
+                            mGroupChannelListAdapter.updateChannels(channelList);
+                            break;
+                        case MOVE:
+                            mGroupChannelListAdapter.moveChannels(channelList, channelCollection.getQuery().getOrder());
+                            break;
+                        case REMOVE:
+                            mGroupChannelListAdapter.removeChannels(channelList);
+                            break;
+                        case CLEAR:
+                            mGroupChannelListAdapter.clearChannelList();
+                            break;
+                    }
+                }
+            });
+        }
+    };
+
     protected void createGroupChannelCollection(GroupChannelListQuery channelListQuery) {
         // Create Channel Collection
         if (mChannelCollection == null) {
@@ -92,31 +133,6 @@ public class ChannelListActivity extends AppCompatActivity {
             mChannelCollection = new ChannelCollection(channelListQuery);
 
         }
-
-        ChannelCollectionHandler channelCollectionHandler = new ChannelCollectionHandler() {
-
-            @Override
-            public void onChannelEvent(final ChannelCollection collection, final List<GroupChannel> channels, final ChannelEventAction action) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d("App", "GroupChannel Collection run called");
-                        switch (action) {
-                            case INSERT:
-                                break;
-                            case UPDATE:
-                                break;
-                            case MOVE:
-                                break;
-                            case REMOVE:
-                                break;
-                            case CLEAR:
-                                break;
-                        }
-                    }
-                });
-            }
-        };
 
         mChannelCollection.setCollectionHandler(channelCollectionHandler);
         mChannelCollection.fetch(new CompletionHandler() {
@@ -131,16 +147,18 @@ public class ChannelListActivity extends AppCompatActivity {
     protected void populate_group_channel_list(List<GroupChannel> list) {
         RecyclerView rvGroupChannelList = findViewById(R.id.channelListRecyclerView);
 
-        GroupChannelListAdapter adapter = new GroupChannelListAdapter(list, CHANNEL_TYPE);
-        rvGroupChannelList.setAdapter(adapter);
+        Log.d("App", "Creating Group Channel List Adapter");
+
+        mGroupChannelListAdapter.insertChannels(list, mChannelCollection.getQuery().getOrder());
+        rvGroupChannelList.setAdapter(mGroupChannelListAdapter);
         rvGroupChannelList.setLayoutManager(new LinearLayoutManager(this));
     }
 
     protected void populate_open_channel_list(List<OpenChannel> list) {
         RecyclerView rvOpenChannelList = findViewById(R.id.channelListRecyclerView);
 
-        OpenChannelListAdapter adapter = new OpenChannelListAdapter(list, CHANNEL_TYPE);
-        rvOpenChannelList.setAdapter(adapter);
+        OpenChannelListAdapter mOpenChannelAdapter = new OpenChannelListAdapter(list, CHANNEL_TYPE);
+        rvOpenChannelList.setAdapter(mOpenChannelAdapter);
         rvOpenChannelList.setLayoutManager(new LinearLayoutManager(this));
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,15 +13,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sendbird.android.GroupChannel;
+import com.sendbird.android.GroupChannelListQuery;
 
 import java.util.List;
 
 public class GroupChannelListAdapter extends RecyclerView.Adapter<GroupChannelListAdapter.GroupChannelListViewHolder> {
-    private List<GroupChannel> mList;
+    private List<GroupChannel> mGroupChannelList;
     private String mChannelType;
 
     public GroupChannelListAdapter(List<GroupChannel> list, String channelType) {
-        mList = list;
+        Log.d("app", "Group Channel List Adapter Created");
+        mGroupChannelList = list;
         mChannelType = channelType;
     }
 
@@ -47,7 +50,7 @@ public class GroupChannelListAdapter extends RecyclerView.Adapter<GroupChannelLi
 
     @Override
     public void onBindViewHolder(GroupChannelListViewHolder holder, int position) {
-        holder.channelUrl = mList.get(position).getUrl();
+        holder.channelUrl = mGroupChannelList.get(position).getUrl();
         holder.channelUrlTextView.setText(holder.channelUrl);
 
         final String channelUrl = holder.channelUrl;
@@ -70,6 +73,55 @@ public class GroupChannelListAdapter extends RecyclerView.Adapter<GroupChannelLi
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mList.size();
+        return mGroupChannelList.size();
     }
+
+    void insertChannels(List<GroupChannel> channels, GroupChannelListQuery.Order order) {
+
+        for (GroupChannel newChannel : channels) {
+            int index = SyncManagerUtils.findIndexOfChannel(mGroupChannelList, newChannel, order);
+            mGroupChannelList.add(index, newChannel);
+        }
+
+        notifyDataSetChanged();
+    }
+
+    void updateChannels(List<GroupChannel> channels) {
+        for (GroupChannel updatedChannel : channels) {
+            int index = SyncManagerUtils.getIndexOfChannel(mGroupChannelList, updatedChannel);
+            if (index != -1) {
+                mGroupChannelList.set(index, updatedChannel);
+                notifyItemChanged(index);
+            }
+        }
+    }
+
+    void moveChannels(List<GroupChannel> channels, GroupChannelListQuery.Order order) {
+        for (GroupChannel movedChannel: channels) {
+            int fromIndex = SyncManagerUtils.getIndexOfChannel(mGroupChannelList, movedChannel);
+            int toIndex = SyncManagerUtils.findIndexOfChannel(mGroupChannelList, movedChannel, order);
+            if (fromIndex != -1) {
+                mGroupChannelList.remove(fromIndex);
+                mGroupChannelList.add(toIndex, movedChannel);
+                notifyItemMoved(fromIndex, toIndex);
+                notifyItemChanged(toIndex);
+            }
+        }
+    }
+
+    void removeChannels(List<GroupChannel> channels) {
+        for (GroupChannel removedChannel : channels) {
+            int index = SyncManagerUtils.getIndexOfChannel(mGroupChannelList, removedChannel);
+            if (index != -1) {
+                mGroupChannelList.remove(index);
+                notifyItemRemoved(index);
+            }
+        }
+    }
+
+    void clearChannelList() {
+        mGroupChannelList.clear();
+        notifyDataSetChanged();
+    }
+
 }
