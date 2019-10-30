@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "812227861036",
+    "firebase_url": "https://simplechatsb.firebaseio.com",
+    "project_id": "simplechatsb",
+    "storage_bucket": "simplechatsb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:812227861036:android:babf9e1fda9f0dad",
+        "android_client_info": {
+          "package_name": "com.example.simplechatsb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "812227861036-hj54p14gocnb5oargd5rcvnnl5bm4i9t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDinG1XNytetMin1eUiikkxXfYXvKo3sbg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "812227861036-hj54p14gocnb5oargd5rcvnnl5bm4i9t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

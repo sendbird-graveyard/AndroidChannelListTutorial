@@ -34,7 +34,7 @@ dependencies {
     // SyncManager
     implementation 'com.sendbird.sdk:sendbird-syncmanager:1.1.6'
     // SendBird
-    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.102'
+    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.106'
 
     implementation 'com.github.bumptech.glide:glide:3.7.0'
 }

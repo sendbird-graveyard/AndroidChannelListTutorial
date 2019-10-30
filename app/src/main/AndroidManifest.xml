@@ -37,7 +37,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.simplechatsb.MainMenuActivity" />
         </activity>
-        <activity android:name=".ChatActivity" />
+        <activity android:name=".GroupChannelChatActivity" />
+        <activity android:name=".OpenChannelChatActivity" />
+
     </application>
 
 </manifest>

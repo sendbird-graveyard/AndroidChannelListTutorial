@@ -55,7 +55,7 @@ public class OpenChannelListAdapter extends RecyclerView.Adapter<OpenChannelList
             @Override
             public void onClick(View v ) {
                 Context context = v.getContext();
-                Intent intent = new Intent(context, ChatActivity.class);
+                Intent intent = new Intent(context, OpenChannelChatActivity.class);
 
                 Bundle bundle = new Bundle();
                 bundle.putString("channelUrl", channelUrl);

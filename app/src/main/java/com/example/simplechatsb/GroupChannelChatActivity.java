@@ -24,7 +24,7 @@ import com.sendbird.android.UserMessage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatActivity extends AppCompatActivity {
+public class GroupChannelChatActivity extends AppCompatActivity {
     private String mChannelUrl;
     private String mChannelType;
     private final static String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_CHAT";
@@ -314,7 +314,7 @@ public class ChatActivity extends AppCompatActivity {
             void bind(UserMessage message) {
                 messageText.setText(message.getMessage());
                 nameText.setText(message.getSender().getNickname());
-                Utils.displayRoundImageFromUrl(ChatActivity.this,
+                Utils.displayRoundImageFromUrl(GroupChannelChatActivity.this,
                         message.getSender().getProfileUrl(), profileImage);
                 timeText.setText(Utils.formatTime(message.getCreatedAt()));
 
