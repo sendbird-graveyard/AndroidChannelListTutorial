@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
 import com.sendbird.android.GroupChannel;
-import com.sendbird.android.OpenChannel;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.UserMessage;
@@ -53,9 +52,6 @@ public class GroupChannelChatActivity extends AppCompatActivity {
         mChannelType = (String) b.get("channelType");
 
         switch(mChannelType) {
-            case Constants.openChannelType:
-                join_open_channel();
-                break;
             case Constants.groupChannelType:
                 join_group_channel();
                 break;
@@ -109,30 +105,7 @@ public class GroupChannelChatActivity extends AppCompatActivity {
         });
     }
 
-    private void join_open_channel() {
-        OpenChannel.getChannel(mChannelUrl, new OpenChannel.OpenChannelGetHandler() {
-            @Override
-            public void onResult(final OpenChannel openChannel, SendBirdException e) {
-                if (e != null) {
-                    e.printStackTrace();
-                    return;
-                }
 
-                openChannel.enter(new OpenChannel.OpenChannelEnterHandler() {
-                    @Override
-                    public void onResult(SendBirdException e) {
-                        if (e != null) {
-                            e.printStackTrace();
-                            return;
-                        };
-
-                        mChatAdapter = new ChatAdapter(openChannel);
-                        mRecyclerView.setAdapter(mChatAdapter);
-                    }
-                });
-            }
-        });
-    }
     @Override
     protected void onResume() {
         super.onResume();

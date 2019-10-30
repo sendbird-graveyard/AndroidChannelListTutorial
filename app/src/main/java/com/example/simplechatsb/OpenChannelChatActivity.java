@@ -56,9 +56,6 @@ public class OpenChannelChatActivity extends AppCompatActivity {
             case Constants.openChannelType:
                 join_open_channel();
                 break;
-            case Constants.groupChannelType:
-                join_group_channel();
-                break;
             default:
                 Log.e("App", "Invalid Channel Type: " + mChannelType);
                 finish();
@@ -81,32 +78,6 @@ public class OpenChannelChatActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    private void join_group_channel() {
-        GroupChannel.getChannel(mChannelUrl, new GroupChannel.GroupChannelGetHandler() {
-            @Override
-            public void onResult(final GroupChannel groupChannel, SendBirdException e) {
-                if (e != null) {
-                    e.printStackTrace();
-                    return;
-                }
-
-                mChatAdapter = new ChatAdapter(groupChannel);
-                mRecyclerView.setAdapter(mChatAdapter);
-
-                groupChannel.join(new GroupChannel.GroupChannelJoinHandler() {
-                    @Override
-                    public void onResult(SendBirdException e) {
-                        if (e != null) {
-                            e.printStackTrace();
-                            return;
-                        };
-
-                    }
-                });
-            }
-        });
     }
 
     private void join_open_channel() {
