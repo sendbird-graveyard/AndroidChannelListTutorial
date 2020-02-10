@@ -16,7 +16,7 @@ import com.sendbird.android.User;
 
 
 public class LoginActivity extends AppCompatActivity {
-    final static String APP_ID = "2686B0E8-CBD6-43EF-98C7-2D321A920418"; // Sample App
+    final static String APP_ID = "FDD6A004-3FD5-478C-937A-B3ECA5BAEB61"; // Sample App
     private Button mConnectButton;
     private TextInputEditText mUserIdEditText, mUserNicknameEditText;
     private SharedPreferences mPrefs;
@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
     private void connectToSendBird(final String userId, final String userNickname) {
         mConnectButton.setEnabled(false);
 
-        SendBird.connect(userId, new SendBird.ConnectHandler() {
+        SendBird.connect(userId, "f7d9a9fd69e87f883c295b4bc6828d66c450a8ef", new SendBird.ConnectHandler() {
             @Override
             public void onConnected(User user, SendBirdException e) {
                 if (e != null) {

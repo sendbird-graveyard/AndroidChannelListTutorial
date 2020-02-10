@@ -19,6 +19,11 @@ import com.sendbird.android.GroupChannel;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.UserMessage;
+import com.sendbird.syncmanager.FailedMessageEventActionReason;
+import com.sendbird.syncmanager.MessageCollection;
+import com.sendbird.syncmanager.MessageEventAction;
+import com.sendbird.syncmanager.MessageFilter;
+import com.sendbird.syncmanager.handler.MessageCollectionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +38,9 @@ public class GroupChannelChatActivity extends AppCompatActivity {
     private LinearLayoutManager mLayoutManager;
     private Button mSendButton;
     private EditText mMessageEditText;
+    private MessageCollection mMessageCollection;
+    final MessageFilter mMessageFilter = new MessageFilter(BaseChannel.MessageTypeFilter.ALL, null, null);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +99,8 @@ public class GroupChannelChatActivity extends AppCompatActivity {
                 mChatAdapter = new ChatAdapter(groupChannel);
                 mRecyclerView.setAdapter(mChatAdapter);
 
+                mMessageCollection = new MessageCollection(groupChannel, mMessageFilter, Long.MAX_VALUE);
+                mMessageCollection.getMessageCount();
                 groupChannel.join(new GroupChannel.GroupChannelJoinHandler() {
                     @Override
                     public void onResult(SendBirdException e) {
@@ -105,6 +115,60 @@ public class GroupChannelChatActivity extends AppCompatActivity {
         });
     }
 
+    private MessageCollectionHandler messageCollectionHandler = new MessageCollectionHandler() {
+
+        @Override
+        public void onMessageEvent(MessageCollection var1, List<BaseMessage> messages, MessageEventAction action) {
+        }
+
+        @Override
+        public void onSucceededMessageEvent(MessageCollection collection, List<BaseMessage> messages, MessageEventAction action) {
+            Log.d("SyncManager", "Succeeded message event + " + action.toString());
+
+            switch (action) {
+                case INSERT:
+                    break;
+                case UPDATE:
+                    break;
+                case REMOVE:
+                    break;
+                case CLEAR:
+                    break;
+            }
+        }
+
+        @Override
+        public void onPendingMessageEvent(MessageCollection collection, List<BaseMessage> messages, MessageEventAction action) {
+            Log.d("SyncManager", "Pending message event + " + action.toString());
+
+            switch (action) {
+                case INSERT:
+                    break;
+                case REMOVE:
+                    break;
+            }
+        }
+
+        @Override
+        public void onFailedMessageEvent(MessageCollection collection, List<BaseMessage> messages, MessageEventAction action, FailedMessageEventActionReason reason) {
+            Log.d("SyncManager", "Failed message event + " + action.toString());
+
+            switch (action) {
+                case INSERT:
+                    break;
+                case UPDATE:
+                    break;
+                case REMOVE:
+                    break;
+            }
+        }
+
+        @Override
+        public void onNewMessage(MessageCollection collection, BaseMessage message) {
+            Log.d("SyncManager", "New message event + ");
+
+        }
+    };
 
     @Override
     protected void onResume() {
@@ -144,6 +208,8 @@ public class GroupChannelChatActivity extends AppCompatActivity {
 
         // Retrieves 30 most recent messages.
         void refresh() {
+            Log.d("app", "refresh Called");
+
             mChannel.getPreviousMessagesByTimestamp(Long.MAX_VALUE, true, 30, true,
                     BaseChannel.MessageTypeFilter.USER, null, new BaseChannel.GetMessagesHandler() {
                         @Override
@@ -162,6 +228,8 @@ public class GroupChannelChatActivity extends AppCompatActivity {
         }
 
         void loadPreviousMessages() {
+            Log.d("app", "loadPreviousMessages Called");
+
             final long lastTimestamp = mMessageList.get(mMessageList.size() - 1).getCreatedAt();
             mChannel.getPreviousMessagesByTimestamp(lastTimestamp, false, 30, true,
                     BaseChannel.MessageTypeFilter.USER, null, new BaseChannel.GetMessagesHandler() {
@@ -171,6 +239,8 @@ public class GroupChannelChatActivity extends AppCompatActivity {
                                 e.printStackTrace();
                                 return;
                             }
+
+
                             mMessageList.addAll(list);
 
                             notifyDataSetChanged();
@@ -189,7 +259,10 @@ public class GroupChannelChatActivity extends AppCompatActivity {
             mChannel.sendUserMessage(message, new BaseChannel.SendUserMessageHandler() {
                 @Override
                 public void onSent(UserMessage userMessage, SendBirdException e) {
+                    Log.d("app", "sendMessage Called");
                     if (e != null) {
+                        Log.d("app", "sendMessage error");
+
                         e.printStackTrace();
                         return;
                     }

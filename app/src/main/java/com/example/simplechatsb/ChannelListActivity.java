@@ -64,6 +64,7 @@ public class ChannelListActivity extends AppCompatActivity {
 
     protected void get_group_channels() {
         GroupChannelListQuery channelListQuery = GroupChannel.createMyGroupChannelListQuery();
+        GroupChannelListQuery filteredQuery = GroupChannel.createMyGroupChannelListQuery();
         channelListQuery.setIncludeEmpty(true);
         channelListQuery.setLimit(100);
         channelListQuery.next(new GroupChannelListQuery.GroupChannelListQueryResultHandler() {
@@ -102,7 +103,7 @@ public class ChannelListActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d("App", "GroupChannel Collection run called, action = " + action.toString());
+                    Log.d("SyncManager", "GroupChannel Collection run called, action = " + action.toString());
 
                     switch (action) {
                         case INSERT:
@@ -129,7 +130,7 @@ public class ChannelListActivity extends AppCompatActivity {
     protected void createGroupChannelCollection(GroupChannelListQuery channelListQuery) {
         // Create Channel Collection
         if (mChannelCollection == null) {
-            Log.d("App", "Initialize GroupChannel Collection");
+            Log.d("SyncManager", "Initialize GroupChannel Collection");
             mChannelCollection = new ChannelCollection(channelListQuery);
 
         }
@@ -138,7 +139,7 @@ public class ChannelListActivity extends AppCompatActivity {
         mChannelCollection.fetch(new CompletionHandler() {
             @Override
             public void onCompleted(SendBirdException e) {
-                Log.d("App", "GroupChannel Collection fetch called");
+                Log.d("SyncManager", "GroupChannel Collection fetch called");
 
             }
         });
@@ -147,7 +148,7 @@ public class ChannelListActivity extends AppCompatActivity {
     protected void populate_group_channel_list(List<GroupChannel> list) {
         RecyclerView rvGroupChannelList = findViewById(R.id.channelListRecyclerView);
 
-        Log.d("App", "Creating Group Channel List Adapter");
+        Log.d("SyncManager", "Creating Group Channel List Adapter");
 
         mGroupChannelListAdapter.insertChannels(list, mChannelCollection.getQuery().getOrder());
         rvGroupChannelList.setAdapter(mGroupChannelListAdapter);

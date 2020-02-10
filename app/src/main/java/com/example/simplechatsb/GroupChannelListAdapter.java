@@ -14,6 +14,9 @@ import android.widget.TextView;
 
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.GroupChannelListQuery;
+import com.sendbird.android.OperatorListQuery;
+import com.sendbird.android.SendBirdException;
+import com.sendbird.android.User;
 
 import java.util.List;
 
@@ -79,6 +82,13 @@ public class GroupChannelListAdapter extends RecyclerView.Adapter<GroupChannelLi
     void insertChannels(List<GroupChannel> channels, GroupChannelListQuery.Order order) {
 
         for (GroupChannel newChannel : channels) {
+            OperatorListQuery listQuery = newChannel.createOperatorListQuery();
+            listQuery.next(new OperatorListQuery.OperatorListQueryResultHandler() {
+                @Override
+                public void onResult(List<User> list, SendBirdException e) {
+
+                }
+            });
             int index = SyncManagerUtils.findIndexOfChannel(mGroupChannelList, newChannel, order);
             mGroupChannelList.add(index, newChannel);
         }
@@ -88,6 +98,7 @@ public class GroupChannelListAdapter extends RecyclerView.Adapter<GroupChannelLi
 
     void updateChannels(List<GroupChannel> channels) {
         for (GroupChannel updatedChannel : channels) {
+            updatedChannel.getInviter();
             int index = SyncManagerUtils.getIndexOfChannel(mGroupChannelList, updatedChannel);
             if (index != -1) {
                 mGroupChannelList.set(index, updatedChannel);

@@ -20,7 +20,7 @@ public class MainMenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_menu);
 
         userID = getIntent().getStringExtra("userID");
-        Log.d("App", "Initialize test");
+        Log.d("SyncManager", "Initialize test");
 
         initializeSyncManager();
 
@@ -48,7 +48,7 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     protected void initializeSyncManager() {
-        Log.d("App", "Initialize Sync Manager");
+        Log.d("SyncManager", "Initialize Sync Manager");
         SendBirdSyncManager.Options options = new SendBirdSyncManager.Options.Builder()
                 .setMessageResendPolicy(SendBirdSyncManager.MessageResendPolicy.AUTOMATIC)
                 .setAutomaticMessageResendRetryCount(5).build();
